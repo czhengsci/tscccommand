@@ -42,7 +42,7 @@ def call_check_file_existance(args):
                     counter += 1
                 else:
                     print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-                    if args.remove: folder_move(args.subdirectory)
+                    if args.remove == 'Yes': folder_move(args.subdirectory)
 
             else:
                 print subdir + 'did not exists in the folder during iteration'
@@ -53,7 +53,7 @@ def call_check_file_existance(args):
             print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
         else:
             print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-            if args.remove: folder_move(args.subdirectory)
+            if args.remove == 'Yes': folder_move(args.subdirectory)
 
     else:
        print "No subdirectory folder index provided"
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                         help="directory containing file existance checking process")
     parser.add_argument("-r", "--direrange",type=int, help="Range of folder id need to iterate")
     parser.add_argument("-s", "--subdirectory",metavar="dir",type=str,help="subdirectory to iterate for stability checking")
-    parser.add_argument("-rme", "--remove",type=str,help="remove option")
+    parser.add_argument("-rme", "--remove",type=str,choices=["No", "Yes"],default='No',help="remove option")
 
     args = parser.parse_args()
     #calculate_phase_stability(args)
