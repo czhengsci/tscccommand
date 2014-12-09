@@ -16,12 +16,9 @@ def check_existance_of_relax2CONTCAR(args):
     filepath = args.subdirectory + '/CONTCAR.relax2.gz'
     return os.path.isfile(filepath)
 
-def folder_move(dict):
+def folder_move(dict,dest):
 
-    if not os.path.exists('temp'):
-        subprocess.call('mkdir temp',shell=True)
-
-    command = 'mv ' + dict + ' temp/'
+    command = 'mv ' + dict + ' ' + dest
     subprocess.call(command,shell=True)
 
 #This is the function we used for file existance checking
@@ -40,9 +37,10 @@ def call_check_file_existance(args):
                 if check_existance_of_relax2CONTCAR(args):
                     print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
                     counter += 1
+                    if args.move == 'Yes': folder_move(subdir,args.movedirectory)
                 else:
                     print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-                    if args.move == 'Yes': folder_move(subdir)
+                    #if args.move == 'Yes': folder_move(subdir)
 
             else:
                 print subdir + ' dose not exist in the folder during iteration'
@@ -51,9 +49,10 @@ def call_check_file_existance(args):
 
         if check_existance_of_relax2CONTCAR(args):
             print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
+            if args.move == 'Yes': folder_move(args.subdirectory,args.movedirectory)
         else:
             print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-            if args.move == 'Yes': folder_move(args.subdirectory)
+            #if args.move == 'Yes': folder_move(args.subdirectory)
 
     else:
        print "No subdirectory folder index provided"
@@ -75,6 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--direrange",type=int, help="Range of folder id need to iterate")
     parser.add_argument("-s", "--subdirectory",metavar="dir",type=str,help="subdirectory to iterate for stability checking")
     parser.add_argument("-me", "--move",type=str,choices=["No", "Yes"],default='No',help="remove option")
+    parser.add_argument("-mvdic", "--movedirectory",metavar="dir",type=str,help="subdirectory to movefileto")
 
     args = parser.parse_args()
     #calculate_phase_stability(args)
