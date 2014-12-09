@@ -1,0 +1,17 @@
+
+tscc-mgr.sdsc.edu: 
+                                                                                  Req'd    Req'd       Elap
+Job ID                  Username    Queue    Jobname          SessID  NDS   TSK   Memory   Time    S   Time
+----------------------- ----------- -------- ---------------- ------ ----- ------ ------ --------- - ---------
+2209202.tscc-mgr.local  chz022      glean    job               61312     2     32    --   24:00:00 R  01:54:17
+2209203.tscc-mgr.local  chz022      glean    job               23866     2     32    --   24:00:00 C       -- 
+2209204.tscc-mgr.local  chz022      glean    job                8783     2     32    --   24:00:00 R  00:05:27
+2209205.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209206.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209207.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209208.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209209.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209210.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209211.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209212.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
+2209213.tscc-mgr.local  chz022      glean    job                 --      2     32    --   24:00:00 Q       -- 
