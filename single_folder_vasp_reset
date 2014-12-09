@@ -1,0 +1,7 @@
+#!/bin/bash
+mkdir bad/
+mv * bad/
+cd bad/
+cp INCAR KPOINTS submit_script POSCAR POTCAR ../
+
+
