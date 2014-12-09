@@ -9,6 +9,7 @@ __date__ = "Sep 21, 2012"
 
 import argparse
 import sys
+import os
 
 from pymatgen.matproj.rest import MPRester
 from pymatgen.phasediagram.pdmaker import PhaseDiagram
@@ -16,6 +17,12 @@ from pymatgen.apps.borg.hive import VaspToComputedEntryDrone
 from pymatgen.phasediagram.pdanalyzer import PDAnalyzer
 from pymatgen.entries.compatibility import MaterialsProjectCompatibility
 import operator
+
+
+def check_existance_of_relax2CONTCAR(args):
+    filepath = args.subdirectory + '/CONTCAR.relax2.gz'
+    return os.path.isfile(filepath)
+
 
 def calculate_phase_stability(args):
     #This initializes the REST adaptor.
@@ -77,8 +84,14 @@ def calculate_dir_phase_stability(args):
         for i in range(args.direrange):
             structuresubdir = args.directory + '%d'%i
             args.subdirectory = structuresubdir
-            print "Running analysis of subdirectory: " + args.subdirectory
-            calculate_phase_stability(args)
+
+            if check_existance_of_relax2CONTCAR(args):
+                print "Running analysis of subdirectory: " + args.subdirectory
+                calculate_phase_stability(args)
+                continue
+
+            else:
+                print "{} folder dose not contain CONTAR relax2 result yet!!".format(args.subdirectory)
 
     elif not args.directory and not args.direrange:
        print "No subdirectory folder index provided"
