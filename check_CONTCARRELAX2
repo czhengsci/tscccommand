@@ -42,7 +42,7 @@ def call_check_file_existance(args):
                     counter += 1
                 else:
                     print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-                    folder_move(args.subdirectory)
+                    if args.remove: folder_move(args.subdirectory)
 
             else:
                 print subdir + 'did not exists in the folder during iteration'
@@ -53,7 +53,7 @@ def call_check_file_existance(args):
             print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
         else:
             print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + args.subdirectory
-            folder_move(args.subdirectory)
+            if args.remove: folder_move(args.subdirectory)
 
     else:
        print "No subdirectory folder index provided"
