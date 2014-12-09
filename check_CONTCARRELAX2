@@ -45,7 +45,7 @@ def call_check_file_existance(args):
                     if args.move == 'Yes': folder_move(subdir)
 
             else:
-                print subdir + 'did not exists in the folder during iteration'
+                print subdir + ' dose not exist in the folder during iteration'
 
     elif args.subdirectory:
 
