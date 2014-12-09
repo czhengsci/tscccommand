@@ -18,10 +18,10 @@ def check_existance_of_relax2CONTCAR(args):
 
 def folder_move(dict):
 
-    if os.path.exists('temp'):
+    if not os.path.exists('temp'):
         subprocess.call('mkdir temp')
 
-    command = 'mv -r ' + dict + ' temp/'
+    command = 'mv ' + dict + ' temp/'
     subprocess.call(command,shell=True)
 
 #This is the function we used for file existance checking
