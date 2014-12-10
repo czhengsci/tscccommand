@@ -17,7 +17,7 @@ def energy_profiler(dictname,args,strucdic):
     atomnumber = args.atom
     vasprunpath = dictname + '/vasprun.xml.relax2.gz'
     vobj = Vasprun(vasprunpath)
-    strucdic[dictname]=(vobj.final_energy/atomnumber)
+    strucdic[dictname]=vobj.final_energy/atomnumber
 
 
 if __name__ == "__main__":
