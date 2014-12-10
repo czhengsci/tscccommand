@@ -50,5 +50,4 @@ if __name__ == "__main__":
 
     #Return the structure file ID with lowest energy per atom
     #print structuredicsorted[0][0]
-    print type(structuredicsorted)
     print structuredicsorted
