@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("directories", metavar="dir",
                         type=str, nargs="+",
                         help="directories to process")
-    parser.add_argument("atom", type=int,
+    parser.add_argument("-atom", type=int,
                         nargs="?",
                         help="Atom number of compound to specify")
 
@@ -50,4 +50,5 @@ if __name__ == "__main__":
 
     #Return the structure file ID with lowest energy per atom
     #print structuredicsorted[0][0]
+    print type(structuredicsorted)
     print structuredicsorted
