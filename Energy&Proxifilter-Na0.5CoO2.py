@@ -10,8 +10,8 @@ import operator
 
 structuredic = {}
 for i in range(61):
-    vobj = Vasprun("Na6Co8O16_%d/vasprun.xml.relax2.gz"%i)
-    structuredic[('Na6Co8O16_%d'%i)]=(vobj.final_energy/30)
+    vobj = Vasprun("Na4Co8O16_%d/vasprun.xml.relax2.gz"%i)
+    structuredic[('Na4Co8O16_%d'%i)]=(vobj.final_energy/28)
         
 #Sort and return structure list based on the order of each structure's energy per atom 
 structuredicsorted = sorted(structuredic.items(),key=operator.itemgetter(1))
