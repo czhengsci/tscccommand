@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("directories", metavar="dir",
                         type=str, nargs="+",
                         help="directories to process")
-    parser.add_argument("atom", type=int,
+    parser.add_argument("-atom", type=int,
                         nargs="?",
                         help="Atom number of compound to specify")
 
