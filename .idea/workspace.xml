@@ -56,8 +56,8 @@
       <file leaf-file-name="qkill_multi.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/qkill_multi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.61928934" vertical-offset="429" max-vertical-offset="1275">
-              <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+            <state vertical-scroll-proportion="0.46700507" vertical-offset="459" max-vertical-offset="1260">
+              <caret line="49" column="40" selection-start-line="49" selection-start-column="40" selection-end-line="49" selection-end-column="40" />
               <folding>
                 <element signature="e#242#251#0" expanded="true" />
               </folding>
@@ -768,8 +768,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/qkill_multi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61928934" vertical-offset="429" max-vertical-offset="1275">
-          <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+        <state vertical-scroll-proportion="0.46700507" vertical-offset="459" max-vertical-offset="1260">
+          <caret line="49" column="40" selection-start-line="49" selection-start-column="40" selection-end-line="49" selection-end-column="40" />
           <folding>
             <element signature="e#242#251#0" expanded="true" />
           </folding>
