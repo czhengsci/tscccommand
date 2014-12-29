@@ -47,9 +47,11 @@ def qkill_multi(args):
     resultfile = open(pjoin(qkillfilepath,RESULTFILE),'w')
     lines = file.readlines()
 
-    for startline in range(2,len(lines)):
+    for startline in range(3,len(lines)):
         line = lines[startline]
-        resultfile.write(lines[startline][:7])
+        resultfile.write('\n')
+        #resultfile.write(lines[startline][:7])
+        resultfile.write(lines[startline].split())
         startline =+ 1
 
     resultfile.close()

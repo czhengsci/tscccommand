@@ -46,8 +46,8 @@
       <file leaf-file-name="nodecheck" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nodecheck">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="774" max-vertical-offset="1365">
-              <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="76" selection-end-column="80" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="429" max-vertical-offset="1365">
+              <caret line="56" column="54" selection-start-line="56" selection-start-column="54" selection-end-line="56" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -56,8 +56,8 @@
       <file leaf-file-name="qkill_multi.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/qkill_multi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.46700507" vertical-offset="459" max-vertical-offset="1260">
-              <caret line="49" column="40" selection-start-line="49" selection-start-column="40" selection-end-line="49" selection-end-column="40" />
+            <state vertical-scroll-proportion="0.56852794" vertical-offset="459" max-vertical-offset="1290">
+              <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
               <folding>
                 <element signature="e#242#251#0" expanded="true" />
               </folding>
@@ -78,7 +78,7 @@
       <file leaf-file-name="tscc_master.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tscc_master.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="667" max-vertical-offset="1515">
+            <state vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="1515">
               <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
               <folding>
                 <element signature="e#289#304#0" expanded="true" />
@@ -732,16 +732,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tscc_master.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="667" max-vertical-offset="1515">
-          <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
-          <folding>
-            <element signature="e#289#304#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/check_CONTCARRELAX2">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1290">
@@ -758,18 +748,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tscc_master.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="1515">
+          <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
+          <folding>
+            <element signature="e#289#304#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/nodecheck">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="774" max-vertical-offset="1365">
-          <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="76" selection-end-column="80" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="429" max-vertical-offset="1365">
+          <caret line="56" column="54" selection-start-line="56" selection-start-column="54" selection-end-line="56" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/qkill_multi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46700507" vertical-offset="459" max-vertical-offset="1260">
-          <caret line="49" column="40" selection-start-line="49" selection-start-column="40" selection-end-line="49" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.56852794" vertical-offset="459" max-vertical-offset="1290">
+          <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
           <folding>
             <element signature="e#242#251#0" expanded="true" />
           </folding>
