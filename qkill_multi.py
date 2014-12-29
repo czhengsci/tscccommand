@@ -48,7 +48,7 @@ def qkill_multi(args):
     resultfile = open(pjoin(qkillfilepath,RESULTFILE),'w')
     lines = file.readlines()
 
-    for startline in range(0,len(lines)):
+    while startline <= len(lines):
         line = lines[startline]
         resultfile.write(lines[startline][:7])
         resultfile.write(DELIMITER)
