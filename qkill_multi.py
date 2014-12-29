@@ -25,7 +25,6 @@ DELIMITER = '---------------------------***********************-----------------
 def qkill_multi(args):
 
     nodedir = {}
-    startline = 2
 
     if not args.directories:
 
@@ -48,10 +47,9 @@ def qkill_multi(args):
     resultfile = open(pjoin(qkillfilepath,RESULTFILE),'w')
     lines = file.readlines()
 
-    while startline <= len(lines):
+    for startline in range(2,len(lines)):
         line = lines[startline]
         resultfile.write(lines[startline][:7])
-        resultfile.write(DELIMITER)
         startline =+ 1
 
     resultfile.close()
