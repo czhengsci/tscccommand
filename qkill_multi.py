@@ -53,8 +53,11 @@ def qkill_multi(args):
         #print linetowrite
         resultfile.write('\n')
         #resultfile.write(lines[startline][:7])
-        resultfile.write(linetowrite[1])
-        resultfile.write(DELIMITER)
+        if linetowrite[9] != 'R':
+            resultfile.write(linetowrite[1])
+            resultfile.write(DELIMITER)
+        else:
+            print linetowrite
 
     resultfile.close()
     file.close()
