@@ -50,6 +50,7 @@ def qkill_multi(args):
     for startline in range(3,len(lines)):
         line = lines[startline]
         linetowrite = line.split()
+        print linetowrite
         resultfile.write('\n')
         #resultfile.write(lines[startline][:7])
         resultfile.write(linetowrite)
