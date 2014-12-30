@@ -50,10 +50,13 @@ def qkill_multi(args):
     for startline in range(5,len(lines)):
         line = lines[startline]
         linetowrite = line.split()
+        jobid = linetowrite[0][:7]
+        killcommand = 'qdel ' + jobid
         #print linetowrite
         resultfile.write('\n')
         if linetowrite[9] != 'R':
-            resultfile.write(linetowrite[0][:7])
+            resultfile.write(jobid)
+            subprocess.call(killcommand,shell=True)
             resultfile.write(DELIMITER)
         else:
             print linetowrite
