@@ -56,7 +56,7 @@ def qkill_multi(args):
         resultfile.write('\n')
         if linetowrite[9] != 'R' and int(jobid) in range(args.startrange,args.endrange):
             resultfile.write(jobid)
-            #subprocess.call(killcommand,shell=True)
+            subprocess.call(killcommand,shell=True)
             resultfile.write(DELIMITER)
         else:
             print linetowrite
