@@ -54,7 +54,7 @@ def qkill_multi(args):
         killcommand = 'qdel ' + jobid
         #print linetowrite
         resultfile.write('\n')
-        if linetowrite[9] != 'R' and jobid in range(args.startrange,args.endrange):
+        if linetowrite[9] != 'R' and int(jobid) in range(args.startrange,args.endrange):
             resultfile.write(jobid)
             #subprocess.call(killcommand,shell=True)
             resultfile.write(DELIMITER)
