@@ -54,9 +54,9 @@ def qkill_multi(args):
         killcommand = 'qdel ' + jobid
         #print linetowrite
         resultfile.write('\n')
-        if linetowrite[9] != 'R':
+        if linetowrite[9] != 'R' and jobid in range(args.startrange,args.endrange):
             resultfile.write(jobid)
-            subprocess.call(killcommand,shell=True)
+            #subprocess.call(killcommand,shell=True)
             resultfile.write(DELIMITER)
         else:
             print linetowrite
@@ -73,9 +73,13 @@ if __name__ == "__main__":
     Version: {}
     Last updated: {}""".format(__version__, __date__))
 
-    parser.add_argument("-r","--range",
+    parser.add_argument("-sr","--startrange",
                         type=int, nargs="?",
-                        help="qid start to kill")
+                        help="range start to kill")
+
+    parser.add_argument("-er","--endrange",
+                        type=int, nargs="?",
+                        help="range endto kill")
 
     parser.add_argument("-dir","--directories", metavar="dir",
                         type=str, nargs="?",
