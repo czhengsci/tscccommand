@@ -21,6 +21,7 @@ def folder_move(dict,dest):
     command = 'mv ' + dict + ' ' + dest
     subprocess.call(command,shell=True)
 
+
 def existance_check_call(directory,files,args):
 
     if 'CONTCAR.relax2.gz' in files:
@@ -102,9 +103,13 @@ if __name__ == "__main__":
                         CONTCAR.relax2 file to")
 
 
+
     args = parser.parse_args()
     #calculate_phase_stability(args)
     # call_check_file_existance(args)
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
             existance_check_call(d,files,args)
+            print 'The subdirectory is: {}'.format(d)
+            print 'The files in subdirectory are: {}'.format(d)
+
