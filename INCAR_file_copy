@@ -2,6 +2,7 @@
 
 """
 Convenient INCAR replacement script.
+We could use these to copy and replace Incar that need to be replaced in multiple folders
 """
 
 __author__ = "Chen Zheng"
