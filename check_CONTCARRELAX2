@@ -4,8 +4,8 @@ __author__ = "Chen Zheng"
 __maintainer__ = "Chen Zheng"
 __email__ = "chz022@ucsd.edu"
 __status__ = "Personal use"
-__version__ = "1.0"
-__date__ = "Dec 4, 2014"
+__version__ = "2.0"
+__date__ = "Jan 18, 2015"
 
 import argparse
 import os
@@ -21,7 +21,21 @@ def folder_move(dict,dest):
     command = 'mv ' + dict + ' ' + dest
     subprocess.call(command,shell=True)
 
-def existance_check_call(args):
+def existance_check_call(directory,files,args):
+
+    if 'CONTCAR.relax2.gz' in files:
+        print 'CONTCAR.relax2.gz exist in subdir: ' + directory
+        if args.store == 'Yes':
+            folder_move(directory,args.storedirectory)
+    else:
+        print 'WARNING!!!!!!  CONTCAR.relax2.gz did not exist in subdir: ' + directory
+        if args.move == 'Yes':
+            if os.path.exists(args.movedirectory):
+                folder_move(directory,args.movedirectory)
+            else:
+                command = 'mkdir ' + args.movedirectory
+                subprocess.call(command,shell=True)
+                folder_move(directory,args.movedirectory)
 
 
 #This is the function we used for file existance checking
@@ -78,9 +92,14 @@ if __name__ == "__main__":
                         help="directory containing file existance checking process")
     parser.add_argument("-r", "--direrange",type=int, help="Range of folder id need to iterate")
     parser.add_argument("-s", "--subdirectory",metavar="dir",type=str,help="subdirectory to iterate for stability checking")
-    parser.add_argument("-me", "--move",type=str,choices=["No", "Yes"],default='No',help="remove option")
+    parser.add_argument("-me", "--move",type=str,choices=["No", "Yes"],default='No',help="Option to move folder that does not \
+                        contain CONTCAR.Relax2.gz to other directory specified in argument movedirectory ")
+    parser.add_argument("-st", "--store",type=str,choices=["No", "Yes"],default='No',help="Option to move folder that does \
+                        contain CONTCAR.Relax2.gz to other directory specified in argument storedirectory")
     parser.add_argument("-mvdic", "--movedirectory",metavar="dir",type=str,help="subdirectory to move folder that does not contain\
                                                                                 CONTCAR.relax2 file")
+    parser.add_argument("-stdic", "--storedirectory",metavar="dir",type=str,help="directory to move folder that does contain\
+                        CONTCAR.relax2 file to")
 
 
     args = parser.parse_args()
@@ -88,5 +107,4 @@ if __name__ == "__main__":
     # call_check_file_existance(args)
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
-            print 'The subdirectory is: {}'.format(d)
-            print 'The files in subdirectory are: {}'.format(d)
+            existance_check_call(d,files,args)
