@@ -21,7 +21,8 @@ def folder_move(dict,dest):
     command = 'mv ' + dict + ' ' + dest
     subprocess.call(command,shell=True)
 
-
+#Function we used to check existance of CONTCAR.relax2.gz file and move the folder to
+#Desired folder if move command was required
 def existance_check_call(directory,files,args):
 
     if 'CONTCAR.relax2.gz' in files:
