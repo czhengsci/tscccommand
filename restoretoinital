@@ -19,7 +19,7 @@ CWD = os.getcwd()
 
 
 def proc_dir(d):
-
+    #set up the defualt folder to store the file need to be keep for later restore purpose
     dirname = os.path.abspath(d)
     restorepath = dirname +'/restore'
 
