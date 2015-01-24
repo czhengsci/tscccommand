@@ -8,7 +8,7 @@ submission scripts and sends them to the queue.
 __author__ = "Shyue Ping Ong", 'Chen Zheng'
 __version__ = "1.0"
 __email__ = "ongsp@ucsd.edu"
-__date__ = "Oct 6, 2013"
+__date__ = "Jan 24, 2015"
 
 import os
 import subprocess
@@ -67,9 +67,13 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
     elif queue == "condo":
         p["group_list"] = "condo-group"
         p["walltime"] = "8:00:00"
+    elif queue == 'hotel':
+        p["group_list"] = "ong-group"
+        p["walltime"] = "96:00:00"
     else: #glean queue
         p["group_list"] = "ong-group"
         p["walltime"] = "24:00:00"
+
 
     p['multinproc'] = 16*numnodes
 
@@ -98,9 +102,9 @@ if __name__ == "__main__":
                         help="directories to process")
     parser.add_argument("-q", "--queue", dest="queue", type=str,
                         nargs="?", default="glean",
-                        choices=["home", "condo", "glean"],
+                        choices=["home", "condo", "glean",'hotel'],
                         help="Queue to send jobs to. Defaults to 'glean'. "
-                             "Other option is 'condo' or 'home'.")
+                             "Other option is 'condo' or 'home' or 'hotel'.")
     parser.add_argument("-v", "--verbosity", dest="verbosity", type=str,
                         nargs="?", default="bae", choices=["ae", "bae"],
                         help="Verbosity of the run. Standard PBS "
