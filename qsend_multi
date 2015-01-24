@@ -67,7 +67,6 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
     elif queue == "condo":
         p["group_list"] = "condo-group"
         p["walltime"] = "8:00:00"
-
     elif queue == 'hotel':
         p["group_list"] = "ong-group"
         p["walltime"] = "96:00:00"
