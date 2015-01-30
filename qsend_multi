@@ -69,7 +69,7 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
         p["walltime"] = "8:00:00"
     elif queue == 'hotel':
         p["group_list"] = "ong-group"
-        p["walltime"] = "96:00:00"
+        p["walltime"] = "168:00:00"
     else: #glean queue
         p["group_list"] = "ong-group"
         p["walltime"] = "24:00:00"
