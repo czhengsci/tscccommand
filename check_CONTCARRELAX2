@@ -55,7 +55,7 @@ def call_check_file_existance(args):
                 args.subdirectory = subdir
 
                 if check_existance_of_relax2CONTCAR(args):
-                    print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
+                    #print 'CONTCAR.relax2.gz exist in subdir: ' + args.subdirectory
                     counter += 1
                     #if args.move == 'Yes': folder_move(subdir,args.movedirectory)
                 else:
