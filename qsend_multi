@@ -53,7 +53,7 @@ walltime_settings={
 pjoin = os.path.join
 
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
+def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
     name = name if name else "job"
     dirname = os.path.abspath(d)
 
