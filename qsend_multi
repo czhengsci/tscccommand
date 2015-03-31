@@ -37,9 +37,9 @@ module load vasp scipy/2.7
 
 commands = {
     "run_vasp": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
-    "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch} relax relax',
-    "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch}',
-    "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch} relax',
+    "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
+    "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch}',
+    "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax',
 }
 
 walltime_settings={
