@@ -89,8 +89,9 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
 
     p['walltime']= '%d:00:00'% walltime
 
-    p["master_command"] = commands[command].format(**p) if queue != 'glean'\
-        else commands['run_vasp_glean']
+    # p["master_command"] = commands[command].format(**p) if queue != 'glean'\
+    #     else commands['run_vasp_glean']
+    p["master_command"] = commands[command].format(**p) 
 
     with open(pjoin(d, SUBMIT_FNAME), "w") as f:
         f.write(TEMPLATE.format(**p))
