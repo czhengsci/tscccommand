@@ -26,7 +26,7 @@ Handler =
 #PBS -N {name}
 #PBS -l nodes={nnodes}:ppn={nproc}:{ibswitch}
 #PBS -l walltime={walltime}
-#PBS -o {command}.out
+#PBS -o vasp.out
 #PBS -e {name}.err
 #PBS -V
 #PBS -M {user}@ucsd.edu
@@ -66,14 +66,13 @@ walltime_settings={
 pjoin = os.path.join
 
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch, walltime):
+def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
     name = name if name else "job"
     dirname = os.path.abspath(d)
 
     p = {
         "queue": queue,
         "account_name": "ong-group",
-        "command": command,
         "name": name,
         "user": os.environ["USER"],
         "nproc": 16,
@@ -179,6 +178,6 @@ if __name__ == "__main__":
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
             if set(files).issuperset(VASP_INPUT):
-                proc_dir(parent, queue=args.queue, command=args.command,
+                proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
                          ibswitch=args.ibswitch,walltime=walltime)
