@@ -37,16 +37,24 @@ module load vasp scipy/2.7
 """
 
 commands = {
-    "run_vasp": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} vasp" -z -s {scratch} relax relax',
-    "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch} relax relax',
-    "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch}',
-    "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {nproc} vasp" -z -s {scratch} relax',
+    "run_vasp": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
+    "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
+    "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch}',
+    "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax',
 }
+
+walltime_settings={
+    'home':(24,240),
+    'hotel':(24,168),
+    'condo':(8,8),
+    'glean':(24,240)
+}
+
 
 pjoin = os.path.join
 
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
+def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
     name = name if name else "job"
     dirname = os.path.abspath(d)
 
@@ -66,20 +74,24 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch):
 
     if queue == "home":
         p["group_list"] = "ong-group"
-        p["walltime"] = "240:00:00"
+        # p["walltime"] = "240:00:00"
     elif queue == "condo":
         p["group_list"] = "condo-group"
-        p["walltime"] = "8:00:00"
+        # p["walltime"] = "8:00:00"
     elif queue == 'hotel':
         p["group_list"] = "ong-group"
-        p["walltime"] = "168:00:00"
+        # p["walltime"] = "168:00:00"
     else: #glean queue
         p["group_list"] = "ong-group"
-        p["walltime"] = "24:00:00"
+        # p["walltime"] = "24:00:00"
 
 
     p['multinproc'] = 16*numnodes
 
+    p['walltime']= '%d:00:00'% walltime
+
+    # p["master_command"] = commands[command].format(**p) if queue != 'glean'\
+    #     else commands['run_vasp_glean']
     p["master_command"] = commands[command].format(**p)
 
     with open(pjoin(d, SUBMIT_FNAME), "w") as f:
@@ -118,6 +130,7 @@ if __name__ == "__main__":
                         nargs="?", default="run_vasp",
                         choices=["run_vasp", "run_vasp_md","run_vasp_glean",'run_vasp_single'],
                         help="Command to run. Defaults to 'vasp'.")
+
     parser.add_argument("-n", "--name", dest="name", type=str,
                         nargs="?", default="",
                         help="Name for your jobs. Makes it easier to "
@@ -126,17 +139,43 @@ if __name__ == "__main__":
     parser.add_argument('-nod','--numnodes',dest='nnodes',type=int,
                         nargs="?",default='1',help='Command to setup number of nodes.')
 
-    parser.add_argument("-ib", "--ibswitch", dest="ibswitch", type=str,choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2'],
+    parser.add_argument("-ib", "--ibswitch", dest="ibswitch", type=str,
+                        choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2'],
                         nargs="?", default="ib",
                         help="Command to setup ibswitch. Defaults to 'ib'")
+
+    parser.add_argument("-w", "--walltime", dest="walltime", type=int,
+                        nargs="?", default=None,
+                        help="Provide a walltime for the job in hours. "
+                             "Defaults are specified for each queue. But for "
+                             "the hotel queue, you must specify a walltime.")
 
 
     args = parser.parse_args()
 
     VASP_INPUT = set(["INCAR", "POSCAR", "POTCAR", "POSCAR"])
 
+    queue = args.queue
+
+    print('%s queue selected.'% queue)
+
+    walltime = args.walltime
+
+    if walltime is None:
+        walltime = walltime_settings[queue]
+        print("Default walltime for queue used. You can "
+              "use the -w option to specify any other number "
+              "explicitly. The %s queue has a limit of %d hours. But be "
+              "careful about running very long jobs." % (
+            queue, walltime[1]))
+        walltime = walltime[0]
+    print("Walltime is set at %d hours." % walltime)
+    print("Selected command is " + commands[args.command])
+    print("")
+
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
             if set(files).issuperset(VASP_INPUT):
                 proc_dir(parent, queue=args.queue, command=args.command,
-                         name=args.name, verbosity=args.verbosity, numnodes=args.nnodes, ibswitch=args.ibswitch)
+                         name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
+                         ibswitch=args.ibswitch,walltime=walltime)
