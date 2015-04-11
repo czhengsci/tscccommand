@@ -21,7 +21,6 @@ CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
 
 TEMPLATE = """#!/bin/bash
-Handler =
 #PBS -q {queue}
 #PBS -N {name}
 #PBS -l nodes={nnodes}:ppn={nproc}:{ibswitch}
