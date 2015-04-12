@@ -14,11 +14,13 @@ __date__ = "Apr 11, 2015"
 import os
 import subprocess
 import argparse
+from monty.tempfile import ScratchDir
 
 
 SCRATCH_ROOT = "/oasis/tscc/scratch/"
 CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
+
 
 TEMPLATE = """#!/bin/bash
 #PBS -q {queue}
@@ -64,11 +66,16 @@ walltime_settings={
 
 pjoin = os.path.join
 
+tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
+
 
 def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
     name = name if name else "job"
     dirname = os.path.abspath(d)
-    relapath = os.path.realpath(d)
+    with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
+        scratch = temp_dir
+
+
 
     p = {
         "queue": queue,
@@ -77,7 +84,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
         "user": os.environ["USER"],
         "nproc": 16,
         "dir": dirname,
-        "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"],relapath),
+        "scratch": scratch,
         "verbosity": verbosity,
         "nnodes":numnodes,
         "ibswitch":ibswitch
