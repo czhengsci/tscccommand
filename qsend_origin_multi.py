@@ -68,6 +68,7 @@ pjoin = os.path.join
 def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
     name = name if name else "job"
     dirname = os.path.abspath(d)
+    relapath = os.path.realpath(d)
 
     p = {
         "queue": queue,
@@ -76,7 +77,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
         "user": os.environ["USER"],
         "nproc": 16,
         "dir": dirname,
-        "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"]),
+        "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"],relapath),
         "verbosity": verbosity,
         "nnodes":numnodes,
         "ibswitch":ibswitch
