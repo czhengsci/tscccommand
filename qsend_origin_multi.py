@@ -36,7 +36,7 @@ TEMPLATE = """#!/bin/bash
 #PBS -d {dir}
 
 #To run vasp, load the VASP module first
-module load vasp scipy/2.7
+#module load vasp scipy/2.7
 
 CURR_DIR=`pwd`
 
