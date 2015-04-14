@@ -22,6 +22,7 @@ CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
 
 
+
 TEMPLATE = """#!/bin/bash
 #PBS -q {queue}
 #PBS -N {name}
