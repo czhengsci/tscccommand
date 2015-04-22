@@ -149,7 +149,6 @@ def get_magnetizations(mydir, ion_list):
     print(str_aligned(data, headers))
 
 def voltage_calculation(args):
-#
 #     if (verbose and not debug):
 #         FORMAT = "%(relativeCreated)d msecs : %(message)s"
 #         logging.basicConfig(level=logging.INFO, format=FORMAT)
@@ -181,6 +180,7 @@ def voltage_calculation(args):
 #         queen.save_data(SAVE_FILE)
 #
 #     entries = queen.get_data()
+    pass
 
 def parse_vasp(args):
 
