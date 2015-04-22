@@ -42,16 +42,13 @@ from prettytable import PrettyTable
 SAVE_FILE = "vasp_data.gz"
 
 
-def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug):
+def get_energies(rootdir, reanalyze, verbose, detailed, sort):
     """
     Doc string.
     """
-    if (verbose and not debug):
+    if verbose:
         FORMAT = "%(relativeCreated)d msecs : %(message)s"
         logging.basicConfig(level=logging.INFO, format=FORMAT)
-
-    elif debug:
-        logging.basicConfig(level=logging.DEBUG)
 
     if not detailed:
         drone = SimpleVaspToComputedEntryDrone(inc_structure=True)
@@ -82,13 +79,6 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
     elif sort == "filename":
         entries = sorted(entries, key=lambda x: x.data["filename"])
 
-    logging.debug('First Energy entry is {}'.format(entries[0]))
-
-    base_energy = entries[0].energy
-    logging.debug("Lowest energy entry's energy is: {}".format(entries[0].energy))
-
-
-
     all_data = []
     for e in entries:
         if not detailed:
@@ -100,15 +90,13 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
         all_data.append((e.data["filename"].replace("./", ""),
                          re.sub("\s+", "", e.composition.formula),
                          "{:.5f}".format(e.energy),
-                         "{:.5f}".format(1000*(e.energy-base_energy)/float(formulaunit)),
                          "{:.5f}".format(e.energy_per_atom),
                          delta_vol))
     if len(all_data) > 0:
-        headers = ("Directory", "Formula", "Energy", "Energy Diff (meV)/F.U.","E/Atom", "% vol chg")
+        headers = ("Directory", "Formula", "Energy", "E/Atom", "% vol chg")
         t = PrettyTable(headers)
         t.align["Directory"] = "l"
         for d in all_data:
-            logging.debug('data row in all data is: \n {}'.format(d))
             t.add_row(d)
         print(t)
         print(msg)
@@ -148,8 +136,6 @@ def get_magnetizations(mydir, ion_list):
         headers.append(str(i))
     print(str_aligned(data, headers))
 
-def voltage_calculation():
-
 def parse_vasp(args):
 
     default_energies = not (args.get_energies or args.ion_list)
@@ -157,7 +143,7 @@ def parse_vasp(args):
     if args.get_energies or default_energies:
         for d in args.directories:
             get_energies(d, args.reanalyze, args.verbose,
-                         args.detailed, args.sort[0],args.formulaunit,args.debug)
+                         args.detailed, args.sort[0])
     if args.ion_list:
         if args.ion_list[0] == "All":
             ion_list = None
@@ -208,15 +194,6 @@ def main():
     parser_vasp.add_argument("-s", "--sort", dest="sort", type=str, nargs=1,
                              default=["energy_per_atom"],
                              help="Sort criteria. Defaults to energy / atom.")
-
-    parser_vasp.add_argument("-fu", "--formulaunit", dest="formulaunit", type=int, nargs=1,
-                             default=1,
-                             help="Formula unit defined by user")
-
-    parser_vasp.add_argument("-db", "--debug", dest="debug", action="store_true",
-                             help="Debug mode, provides information used for debug")
-
-
     parser_vasp.set_defaults(func=parse_vasp)
 
     args = parser.parse_args()
