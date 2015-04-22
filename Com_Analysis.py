@@ -148,7 +148,39 @@ def get_magnetizations(mydir, ion_list):
         headers.append(str(i))
     print(str_aligned(data, headers))
 
-def voltage_calculation():
+# def voltage_calculation(args):
+#
+#     if (verbose and not debug):
+#         FORMAT = "%(relativeCreated)d msecs : %(message)s"
+#         logging.basicConfig(level=logging.INFO, format=FORMAT)
+#
+#     elif debug:
+#         logging.basicConfig(level=logging.DEBUG)
+#
+#     if not detailed:
+#         drone = SimpleVaspToComputedEntryDrone(inc_structure=True)
+#     else:
+#         drone = VaspToComputedEntryDrone(inc_structure=True,
+#                                          data=["filename",
+#                                                "initial_structure"])
+#
+#     ncpus = multiprocessing.cpu_count()
+#     logging.info("Detected {} cpus".format(ncpus))
+#     queen = BorgQueen(drone, number_of_drones=ncpus)
+#     if os.path.exists(SAVE_FILE) and not reanalyze:
+#         msg = "Using previously assimilated data from {}.".format(SAVE_FILE) \
+#             + " Use -f to force re-analysis."
+#         queen.load_data(SAVE_FILE)
+#     else:
+#         if ncpus > 1:
+#             queen.parallel_assimilate(rootdir)
+#         else:
+#             queen.serial_assimilate(rootdir)
+#         msg = "Analysis results saved to {} for faster ".format(SAVE_FILE) + \
+#               "subsequent loading."
+#         queen.save_data(SAVE_FILE)
+#
+#     entries = queen.get_data()
 
 def parse_vasp(args):
 
@@ -215,9 +247,37 @@ def main():
 
     parser_vasp.add_argument("-db", "--debug", dest="debug", action="store_true",
                              help="Debug mode, provides information used for debug")
-
-
     parser_vasp.set_defaults(func=parse_vasp)
+
+    parser_voltage = subparsers.add_parser("voltage", help="Run analysis and get voltage plateau")
+    parser_voltage.add_argument("directories", metavar="dir", default=".",
+                             type=str, nargs="*",
+                             help="directory to process (default to .)")
+    parser_voltage.add_argument("-ak", "--alkali", dest="alkali", type=str,
+                             help="Alkali metal specified for voltage plateau calculation")
+    parser_voltage.add_argument("-f", "--force", dest="reanalyze",
+                             action="store_true",
+                             help="Force reanalysis. Typically, vasp_analyzer"
+                             " will just reuse a vasp_analyzer_data.gz if "
+                             "present. This forces the analyzer to reanalyze "
+                             "the data.")
+    parser_voltage.add_argument("-v", "--verbose", dest="verbose",
+                             action="store_true",
+                             help="verbose mode. Provides detailed output on "
+                             "progress.")
+    parser_voltage.add_argument("-d", "--detailed", dest="detailed",
+                             action="store_true",
+                             help="Detailed mode. Parses vasprun.xml instead "
+                             "of separate vasp input. Slower.")
+    parser_voltage.add_argument("-fu", "--formulaunit", dest="formulaunit", type=int,
+                             default=1,
+                             help="Formula unit defined by user")
+    parser_voltage.add_argument("-db", "--debug", dest="debug", action="store_true",
+                             help="Debug mode, provides information used for debug")
+    parser_voltage.set_defaults(func=voltage_calculation)
+
+
+
 
     args = parser.parse_args()
     args.func(args)
