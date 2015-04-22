@@ -148,7 +148,7 @@ def get_magnetizations(mydir, ion_list):
         headers.append(str(i))
     print(str_aligned(data, headers))
 
-# def voltage_calculation(args):
+def voltage_calculation(args):
 #
 #     if (verbose and not debug):
 #         FORMAT = "%(relativeCreated)d msecs : %(message)s"
