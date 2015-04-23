@@ -90,6 +90,8 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
 
 
     all_data = []
+    energy_diff = []
+
     for e in entries:
         if not detailed:
             delta_vol = "{:.2f}".format(e.data["delta_volume"] * 100)
@@ -100,9 +102,11 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
         all_data.append((e.data["filename"].replace("./", ""),
                          re.sub("\s+", "", e.composition.formula),
                          "{:.5f}".format(e.energy),
-                         "{:.5f}".format(1000*(e.energy-base_energy)/float(formulaunit)),
+                         "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
                          "{:.5f}".format(e.energy_per_atom),
                          delta_vol))
+        energy_diff.append("{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)))
+
     if len(all_data) > 0:
         headers = ("Directory", "Formula", "Energy", "Energy Diff (meV)/F.U.","E/Atom", "% vol chg")
         t = PrettyTable(headers)
@@ -114,6 +118,10 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
         print(msg)
     else:
         print("No valid vasp run found.")
+
+    print 'Energy above hull is: \n'
+    print energy_diff
+    print map(lambda x: x.encode('ascii'), energy_diff)
 
 
 def get_magnetizations(mydir, ion_list):
@@ -241,7 +249,7 @@ def main():
                              default=["energy_per_atom"],
                              help="Sort criteria. Defaults to energy / atom.")
 
-    parser_vasp.add_argument("-fu", "--formulaunit", dest="formulaunit", type=int, nargs=1,
+    parser_vasp.add_argument("-fu", "--formulaunit", dest="formulaunit", type=str,
                              default=1,
                              help="Formula unit defined by user")
 
