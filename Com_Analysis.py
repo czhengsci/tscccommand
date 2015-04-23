@@ -42,7 +42,7 @@ from prettytable import PrettyTable
 SAVE_FILE = "vasp_data.gz"
 
 
-def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug):
+def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug,hull):
     """
     Doc string.
     """
@@ -119,9 +119,9 @@ def get_energies(rootdir, reanalyze, verbose, detailed, sort, formulaunit, debug
     else:
         print("No valid vasp run found.")
 
-    print 'Energy above hull is: \n'
-    print energy_diff
-    print map(lambda x: x.encode('ascii'), energy_diff)
+    if hull:
+        print 'Energy above hull is: \n'
+        print map(lambda x: x.encode('ascii'), energy_diff)
 
 
 def get_magnetizations(mydir, ion_list):
@@ -197,7 +197,7 @@ def parse_vasp(args):
     if args.get_energies or default_energies:
         for d in args.directories:
             get_energies(d, args.reanalyze, args.verbose,
-                         args.detailed, args.sort[0],args.formulaunit,args.debug)
+                         args.detailed, args.sort[0],args.formulaunit,args.debug,args.hull)
     if args.ion_list:
         if args.ion_list[0] == "All":
             ion_list = None
@@ -228,6 +228,8 @@ def main():
                              help="directory to process (default to .)")
     parser_vasp.add_argument("-e", "--energies", dest="get_energies",
                              action="store_true", help="Print energies")
+    parser_vasp.add_argument("-hu", "--hull", dest="hull",
+                             action="store_true", help="Print energies above lowest structure list")
     parser_vasp.add_argument("-m", "--mag", dest="ion_list", type=str, nargs=1,
                              help="Print magmoms. ION LIST can be a range "
                              "(e.g., 1-2) or the string 'All' for all ions.")
