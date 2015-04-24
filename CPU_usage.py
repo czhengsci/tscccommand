@@ -28,7 +28,7 @@ def analysis(filepath,debug):
             logging.debug('Found line with chz022 {}'.format(line))
 
             for element in line.split(' '):
-                m = re.match("-*",m)
+                m = re.match("-*",element)
                 time.append(m)
             matchline=line.rstrip()
             matchdata.append(matchline)
