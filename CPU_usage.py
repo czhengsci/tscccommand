@@ -26,12 +26,14 @@ def analysis(filepath,debug):
     for line in file:
         if re.search('chz022',line):
             logging.debug('Found line with chz022 {}'.format(line))
+
+            for element in line.split(' '):
+                m = re.match("-*",m)
+                time.append(m)
             matchline=line.rstrip()
             matchdata.append(matchline)
-    for element in matchdata:
-        if re.search('-',element.split(' ')):
-            time.append(element)
-            logging.debug('The use time is: {}'.format(element))
+
+    logging.debug('The use time is: {}'.format(time))
     return time
 
 if __name__=='__main__':
