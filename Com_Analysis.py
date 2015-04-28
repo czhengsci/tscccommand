@@ -248,7 +248,7 @@ def voltage_calculation(args):
 
 def parse_vasp(args):
 
-    default_energies = not (args.get_energies or args.ion_list)
+    default_energies = not (args.get_energies or args.ion_list or args.ion_avg_list)
 
     if args.get_energies or default_energies:
         for d in args.directories:
