@@ -273,7 +273,7 @@ def parse_vasp(args):
         for d in args.directories:
             get_ave_magnetization(d,ion_list)
 
-        logging.debug('The passed in ion_avg_list is {}\n'.format(args.ion_avg_list))
+        logging.info('The passed in ion_avg_list is {}\n'.format(args.ion_avg_list))
         # logging.debug('The length of passed in ion_avg_list is{}\n'.format(len(args.ion_avg_list)))
 
         pass
