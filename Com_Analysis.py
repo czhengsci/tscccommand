@@ -18,6 +18,7 @@ import os
 import re
 import logging
 import multiprocessing
+import numpy as np
 import sys
 import datetime
 
@@ -162,16 +163,19 @@ def get_ave_magnetization(mydir,ave_list):
     ave_list_dic = {}
     data = []
     keylist = []
+    row_stat = {}
 
     if ave_list:
         for key in ave_list:
             (start, end) = [int(i) for i in re.split("-", key)]
             value = list(range(start, end + 1))
             ave_list_dic[key] = value
+            row_stat[key] = []
             keylist.append(key)
             logging.debug('Key value is {}'.format(key))
     else:
         keylist.append('Average All')
+        row_stat['Average All']=[]
         logging.debug('Key value is {}'.format(keylist))
 
     for (parent, subdirs, files) in os.walk(mydir):
@@ -195,6 +199,8 @@ def get_ave_magnetization(mydir,ave_list):
                                 magdata.append(mags[ion])
                             avg_mag = sum(magdata)/len(magdata)
                             row.append(avg_mag)
+                            row_stat[ele].append(avg_mag)
+                            logging.debug('The intermediat row_stat key value is: {}'.format(row_stat[key]))
                         data.append(row)
 
                     else:
@@ -205,10 +211,22 @@ def get_ave_magnetization(mydir,ave_list):
                         logging.debug('The magdata list length is: {}'.format(len(magdata)))
                         avg_mag = sum(magdata)/len(magdata)
                         row.append(avg_mag)
+                        row_stat['Average All'].append(avg_mag)
                         data.append(row)
                 except:
                     pass
 
+    logging.debug('The row state value is: {}'.format(row_stat))
+
+
+    static_row = ['The average and standard deviation data of all above value is: ']
+    for ele in keylist:
+        ele_avg = sum(row_stat[ele])/len(row_stat[ele])
+        std_dev = np.std(np.array(row_stat[ele]))
+        static_row.append(str(ele_avg)+'_'+str(std_dev))
+
+
+    data.append(static_row)
     headers = ["Filename"]
     headers.extend(keylist)
     print(str_aligned(data, headers))
