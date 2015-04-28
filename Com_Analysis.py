@@ -158,6 +158,7 @@ def get_magnetizations(mydir, ion_list):
 
 def get_ave_magnetization(mydir,ave_list):
 
+
     ave_list_dic = {}
     data = []
     keylist = []
@@ -168,8 +169,10 @@ def get_ave_magnetization(mydir,ave_list):
             value = list(range(start, end + 1))
             ave_list_dic[key] = value
             keylist.append(key)
+            logging.debug('Key value is {}'.format(key))
     else:
         keylist.append('Average All')
+        logging.debug('Key value is {}'.format(keylist))
 
     for (parent, subdirs, files) in os.walk(mydir):
         for f in files:
@@ -184,9 +187,10 @@ def get_ave_magnetization(mydir,ave_list):
                     row.append(fullpath.lstrip("./"))
 
                     if ave_list:
-                        for k, p in ave_list_dic.items():
+                        for ele in keylist:
+                            all_ions = ave_list_dic[ele]
                             magdata = []
-                            all_ions = p
+                            logging.debug('ion list is {}\n'.format(all_ions))
                             for ion in all_ions:
                                 magdata.append(mags[ion])
                             avg_mag = sum(magdata)/len(magdata)
@@ -194,20 +198,18 @@ def get_ave_magnetization(mydir,ave_list):
                         data.append(row)
 
                     else:
+                        magdata = []
                         for ion in all_ions:
-                            magdata = []
                             magdata.append(mags[ion])
-                            avg_mag = sum(magdata)/len(magdata)
-                            row.append(avg_mag)
+                        logging.debug('The magdata list is: {}'.format(magdata))
+                        logging.debug('The magdata list length is: {}'.format(len(magdata)))
+                        avg_mag = sum(magdata)/len(magdata)
+                        row.append(avg_mag)
                         data.append(row)
                 except:
                     pass
 
-    # for d in data:
-    #     if len(d) < max_row + 1:
-    #         d.extend([""] * (max_row + 1 - len(d)))
     headers = ["Filename"]
-    # for i in range(max_row):
     headers.extend(keylist)
     print(str_aligned(data, headers))
 
@@ -265,6 +267,9 @@ def parse_vasp(args):
 
     #Return a dic to store the average value of mag and relative ion list
     if args.ion_avg_list:
+
+        if args.debug:
+            logging.basicConfig(level=logging.DEBUG)
 
         if args.ion_avg_list[0] == "All":
             ion_list = None
