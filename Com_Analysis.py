@@ -156,6 +156,62 @@ def get_magnetizations(mydir, ion_list):
         headers.append(str(i))
     print(str_aligned(data, headers))
 
+def get_ave_magnetization(mydir,ave_list):
+
+    ave_list_dic = {}
+    data = []
+    keylist = []
+
+    if ave_list:
+        for key in ave_list:
+            (start, end) = [int(i) for i in re.split("-", key)]
+            value = list(range(start, end + 1))
+            ave_list_dic[key] = value
+            keylist.append(key)
+    else:
+        keylist.append('Average All')
+
+    for (parent, subdirs, files) in os.walk(mydir):
+        for f in files:
+            if re.match("OUTCAR*", f):
+                try:
+                    row = []
+                    fullpath = os.path.join(parent, f)
+                    outcar = Outcar(fullpath)
+                    mags = outcar.magnetization
+                    mags = [m["tot"] for m in mags]
+                    all_ions = list(range(len(mags)))
+                    row.append(fullpath.lstrip("./"))
+
+                    if ave_list:
+                        for k, p in ave_list_dic.items():
+                            magdata = []
+                            all_ions = p
+                            for ion in all_ions:
+                                magdata.append(mags[ion])
+                            avg_mag = sum(magdata)/len(magdata)
+                            row.append(avg_mag)
+                        data.append(row)
+
+                    else:
+                        for ion in all_ions:
+                            magdata = []
+                            magdata.append(mags[ion])
+                            avg_mag = sum(magdata)/len(magdata)
+                            row.append(avg_mag)
+                        data.append(row)
+                except:
+                    pass
+
+    # for d in data:
+    #     if len(d) < max_row + 1:
+    #         d.extend([""] * (max_row + 1 - len(d)))
+    headers = ["Filename"]
+    # for i in range(max_row):
+    headers.extend(keylist)
+    print(str_aligned(data, headers))
+
+
 def voltage_calculation(args):
 #     if (verbose and not debug):
 #         FORMAT = "%(relativeCreated)d msecs : %(message)s"
@@ -207,6 +263,21 @@ def parse_vasp(args):
         for d in args.directories:
             get_magnetizations(d, ion_list)
 
+    #Return a dic to store the average value of mag and relative ion list
+    if args.ion_avg_list:
+
+        if args.ion_avg_list[0] == "All":
+            ion_list = None
+        else:
+            ion_list = args.ion_avg_list
+        for d in args.directories:
+            get_ave_magnetization(d,ion_list)
+
+        logging.debug('The passed in ion_avg_list is {}\n'.format(args.ion_avg_list))
+        # logging.debug('The length of passed in ion_avg_list is{}\n'.format(len(args.ion_avg_list)))
+
+        pass
+
 
 
 def main():
@@ -254,6 +325,10 @@ def main():
     parser_vasp.add_argument("-fu", "--formulaunit", dest="formulaunit", type=str,
                              default=1,
                              help="Formula unit defined by user")
+
+    parser_vasp.add_argument("-avl", "--averlist", dest="ion_avg_list", type=str, nargs='*',
+                             help="Return average magmons value of ions. ION LIST can be a range "
+                             "(e.g., 1-2, 3-4) or the string 'All' for all ions.")
 
     parser_vasp.add_argument("-db", "--debug", dest="debug", action="store_true",
                              help="Debug mode, provides information used for debug")
