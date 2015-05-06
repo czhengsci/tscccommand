@@ -122,7 +122,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
             ave_mag_data, ave_key_list = get_ave_magnetization(entry_path,args.ion_avg_list)
             entry_data.extend(ave_mag_data)
 
-        if threshold != 0 and float(entry_data[4])>threshold:
+        if threshold != 0 and float(entry_data[4])<threshold:
             all_data.append(entry_data)
 
         elif threshold == 0:
