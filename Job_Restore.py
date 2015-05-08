@@ -39,7 +39,6 @@ def check_resub_relax2(args):
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    submit_command(args)
 
     dir_entry = parse_entry(args)
     for ele in dir_entry:
