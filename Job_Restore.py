@@ -64,7 +64,7 @@ def check_resub_relax2(args):
             for dir_ele in no_relax2_file:
                 resub_command = submit_command(args,dir_ele)
                 restore_command = 'restoretoinital {}'.format(dir_ele)
-                subprocess.call(restore_command,shell=)
+                subprocess.call(restore_command,shell=True)
                 subprocess.call(resub_command,shell=True)
 
 
