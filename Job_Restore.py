@@ -32,6 +32,7 @@ def submit_command(args,entry):
 
 #This is a funciton we used for check, restore and resub job using PBS system
 #Integrate with check_CONTCARRElax command
+
 def check_resub_relax2(args):
 
 
@@ -62,6 +63,7 @@ def check_resub_relax2(args):
 
             for dir_ele in no_relax2_file:
                 resub_command = submit_command(args,dir_ele)
+                restore_command = 'restoretoinital {}'.format(dir_ele)
                 subprocess.call(resub_command,shell=True)
 
 
