@@ -25,7 +25,7 @@ def submit_command(args,entry):
                                                                                         var_dic['name'], var_dic['nnodes'],
                                                                                         var_dic['ibswitch'],var_dic['walltime'])
     logging.debug('Resub command is: \n {}'.format(subcommand))
-    
+
     return subcommand
 
 
@@ -62,7 +62,7 @@ def check_resub_relax2(args):
             no_relax2_file = [f for f in os.listdir('.') if f not in exclude]
 
             for dir_ele in no_relax2_file:
-                resub_command = submit_command(dir_ele)
+                resub_command = submit_command(args,dir_ele)
                 subprocess.call(resub_command,shell=True)
 
 
