@@ -71,7 +71,7 @@ def main():
     subparsers = parser.add_subparsers()
 
     parser_resub = subparsers.add_parser("relax_resub", help="Resub job based on existing of relax2 file")
-    parser_resub.add_argument("directories", metavar="dir", default=".",
+    parser_resub.add_argument("directories", metavar="dir", dest='dir',default=".",
                              type=str, nargs="*",
                              help="directory to process (default to .)")
     parser_resub.add_argument("-dep",  "--depth", dest='depth', default="1",
