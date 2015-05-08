@@ -131,7 +131,7 @@ if __name__ == "__main__":
                         help="Command to run. Defaults to 'vasp'.")
 
     parser.add_argument("-n", "--name", dest="name", type=str,
-                        nargs="?", default="",
+                        nargs="?", default="jobs",
                         help="Name for your jobs. Makes it easier to "
                              "identify which series of jobs they "
                              "belong to. Keep it short and crytic.")
