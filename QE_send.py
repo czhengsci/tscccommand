@@ -1,29 +1,33 @@
 #!/usr/bin/env python
 
 """
-Convenient job submit script for TSCC, which automatically generates
-submission scripts and sends them to the queue.
+Convenient job submit quantum espresso submit script for TSCC, the template is the standard submit_script.
+which automatically generates submission scripts and sends them to the queue.
 """
 
-__author__ = "Shyue Ping Ong", 'Chen Zheng'
+
+__author__ = 'chenzheng'
 __version__ = "1.0"
-__email__ = "ongsp@ucsd.edu"
-__date__ = "Jan 24, 2015"
+__email__ = "chz022@ucsd.edu"
+__date__ = "May 11th, 2015"
 
 import os
 import subprocess
 import argparse
+import fnmatch
+from monty.tempfile import ScratchDir
 
 
 SCRATCH_ROOT = "/oasis/tscc/scratch/"
 CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
+
 TEMPLATE = """#!/bin/bash
 #PBS -q {queue}
 #PBS -N {name}
 #PBS -l nodes={nnodes}:ppn={nproc}:{ibswitch}
 #PBS -l walltime={walltime}
-#PBS -o {command}.out
+#PBS -o nwchem.out
 #PBS -e {name}.err
 #PBS -V
 #PBS -M {user}@ucsd.edu
@@ -31,16 +35,25 @@ TEMPLATE = """#!/bin/bash
 #PBS -A {account_name}
 #PBS -d {dir}
 
-module load vasp scipy/2.7
-{master_command}
-"""
+#To run vasp, you need to load the nwchem module first.
+module load nwchem
 
-commands = {
-    "run_vasp": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
-    "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax relax',
-    "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch}',
-    "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.2.12/openmpi_ib/bin/vasp" -z -s {scratch} relax',
-}
+CURR_DIR=`pwd`
+
+#You should always run your calculations on the scratch space.
+#The next three lines create a unique scratch directory.
+SCRATCH={scratch}
+mkdir $SCRATCH
+cp * $SCRATCH
+cd $SCRATCH
+
+#This is the actual run command. quantum espresso is run using mpirun.
+
+mpirun -machinefile $PBS_NODEFILE -np 16 /home/chz022/repos/Quantum_Espresso/espresso-4.1.2/bin/pw.x -inp {Input_File} > {Output_File}
+
+#This moves the completed calculation back to the working directory and cleanup.
+mv * $CURR_DIR
+"""
 
 walltime_settings={
     'home':(24,240),
@@ -52,23 +65,33 @@ walltime_settings={
 
 pjoin = os.path.join
 
+tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
+def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
+
     name = name if name else "job"
     dirname = os.path.abspath(d)
+    OutputFile = InputFile.split('.')[0] + '.out'
+
+
+    with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
+        scratch = temp_dir
+
+
 
     p = {
         "queue": queue,
         "account_name": "ong-group",
-        "command": command,
         "name": name,
         "user": os.environ["USER"],
         "nproc": 16,
         "dir": dirname,
-        "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"]),
+        "scratch": scratch,
         "verbosity": verbosity,
         "nnodes":numnodes,
-        "ibswitch":ibswitch
+        "ibswitch":ibswitch,
+        "Input_File":InputFile,
+        "Output_File":OutputFile
     }
 
     if queue == "home":
@@ -89,10 +112,6 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
 
     p['walltime']= '%d:00:00'% walltime
 
-    # p["master_command"] = commands[command].format(**p) if queue != 'glean'\
-    #     else commands['run_vasp_glean']
-    p["master_command"] = commands[command].format(**p)
-
     with open(pjoin(d, SUBMIT_FNAME), "w") as f:
         f.write(TEMPLATE.format(**p))
     os.chdir(d)
@@ -104,10 +123,10 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-        qsend is a convenient script for submitting jobs using templates on
-        TSCC. Currently mainly for VASP jobs.""",
+        quantum espresso_send is a convenient script for submitting jobs using templates on
+        TSCC. Currently mainly for quantum espresso jobs.""",
         epilog="""
-    Author: Shyue Ping Ong
+    Author: Chen Zheng
     Version: {}
     Last updated: {}""".format(__version__, __date__))
 
@@ -125,13 +144,9 @@ if __name__ == "__main__":
                              "notification settings. Options are a (abort "
                              "only - the default), ae (abort and end) and bae ("
                              "begin, abort and end).")
-    parser.add_argument("-c", "--command", dest="command", type=str,
-                        nargs="?", default="run_vasp",
-                        choices=["run_vasp", "run_vasp_md","run_vasp_glean",'run_vasp_single'],
-                        help="Command to run. Defaults to 'vasp'.")
 
     parser.add_argument("-n", "--name", dest="name", type=str,
-                        nargs="?", default="jobs",
+                        nargs="?", default="",
                         help="Name for your jobs. Makes it easier to "
                              "identify which series of jobs they "
                              "belong to. Keep it short and crytic.")
@@ -152,8 +167,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    VASP_INPUT = set(["INCAR", "POSCAR", "POTCAR", "POSCAR"])
-
     queue = args.queue
 
     print('%s queue selected.'% queue)
@@ -169,12 +182,11 @@ if __name__ == "__main__":
             queue, walltime[1]))
         walltime = walltime[0]
     print("Walltime is set at %d hours." % walltime)
-    print("Selected command is " + commands[args.command])
     print("")
 
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
-            if set(files).issuperset(VASP_INPUT):
-                proc_dir(parent, queue=args.queue, command=args.command,
+            for filename in fnmatch.filter(files, '*.nw'):
+                proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime)
+                         ibswitch=args.ibswitch,walltime=walltime,InputFile=filename)
