@@ -27,7 +27,7 @@ TEMPLATE = """#!/bin/bash
 #PBS -N {name}
 #PBS -l nodes={nnodes}:ppn={nproc}:{ibswitch}
 #PBS -l walltime={walltime}
-#PBS -o nwchem.out
+#PBS -o {name}
 #PBS -e {name}.err
 #PBS -V
 #PBS -M {user}@ucsd.edu
@@ -69,9 +69,10 @@ tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 
 def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
 
-    name = name if name else "job"
+    # name = name if name else "job"
+    name = InputFile.split('.')[0]
     dirname = os.path.abspath(d)
-    OutputFile = InputFile.split('.')[0] + '.out'
+    OutputFile = InputFile.rsplit('.',1)[0] + '.out'
 
 
     with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
