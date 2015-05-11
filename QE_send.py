@@ -69,6 +69,7 @@ tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 
 def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
 
+    InputFile= fnmatch.filter(InputFile, '*.pw.in')
     # name = name if name else "job"
     name = InputFile.split('.')[0]
     dirname = os.path.abspath(d)
@@ -169,6 +170,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     queue = args.queue
+    HPC_Input = set(['Fe.pbe-spn-kjpaw_psl.0.2.1.UPF'])
 
     print('%s queue selected.'% queue)
 
@@ -187,7 +189,8 @@ if __name__ == "__main__":
 
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
-            for filename in fnmatch.filter(files, '*.pw.in'):
+            if set(files).issuperset(HPC_Input):
+            # for filename in fnmatch.filter(files, '*.pw.in'):
                 proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime,InputFile=filename)
+                         ibswitch=args.ibswitch,walltime=walltime,InputFile=files)
