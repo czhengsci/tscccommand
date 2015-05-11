@@ -186,7 +186,7 @@ if __name__ == "__main__":
 
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
-            for filename in fnmatch.filter(files, '*.nw'):
+            for filename in fnmatch.filter(files, '*.pw.in'):
                 proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
                          ibswitch=args.ibswitch,walltime=walltime,InputFile=filename)
