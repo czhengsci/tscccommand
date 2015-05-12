@@ -60,13 +60,13 @@ pjoin = os.path.join
 
 tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 
-def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
+def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime, InputFile):
 
-    inputfilename = filter(lambda x: 'pw.in' in x, InputFile)
+    # inputfilename = filter(lambda x: 'pw.in' in x, InputFile)
     name = name if name else "job"
-    # name = inputfilename[0].split('.')[0]
+    # name = InputFile[0].split('.')[0]
     dirname = os.path.abspath(d)
-    OutputFile = inputfilename[0].rsplit('.',1)[0] + '.out'
+    OutputFile = InputFile[0].rsplit('.',1)[0] + '.out'
 
 
     with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     queue = args.queue
-    HPC_Input = set(['Fe.pbe-spn-kjpaw_psl.0.2.1.UPF'])
+    # HPC_Input = set(['Fe.pbe-spn-kjpaw_psl.0.2.1.UPF'])
 
     print('%s queue selected.'% queue)
 
@@ -182,8 +182,8 @@ if __name__ == "__main__":
 
     for d in args.directories:
         for parent, subdir, files in os.walk(d):
-            if set(files).issuperset(HPC_Input):
-            # for filename in fnmatch.filter(files, '*.pw.in'):
+            # if set(files).issuperset(HPC_Input):
+            for filename in fnmatch.filter(files, '*.pw.in'):
                 proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime,InputFile=files)
+                         ibswitch=args.ibswitch, walltime=walltime, InputFile=filename)

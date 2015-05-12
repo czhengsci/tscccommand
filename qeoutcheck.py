@@ -26,7 +26,7 @@ def folder_move(dict,dest):
 #Two arguments could be specified to set moving option different condition
 def existance_check_call(directory,files,args):
 
-    if '.pw.in' in files:
+    if 'CONTCAR.relax2.gz' in files:
         print 'CONTCAR.relax2.gz exist in subdir: ' + directory
         if args.store == 'Yes':
             folder_move(directory,args.storedirectory)
@@ -43,8 +43,8 @@ def existance_check_call(directory,files,args):
 
 #This is the function we used for file existance checking
 def call_check_file_existance(args):
-    
-    #Counter to count number of folder contains CONTCAR.relax2.gz	
+
+    #Counter to count number of folder contains CONTCAR.relax2.gz
     counter = 0
     if args.direrange:
         for i in range(args.direrange):
@@ -76,7 +76,7 @@ def call_check_file_existance(args):
 
     else:
        print "No subdirectory folder index provided"
-    
+
     print 'Number of sub-folders contain CONTCAR.relax2.gz is {}.'.format(counter)
 
 if __name__ == "__main__":
@@ -114,4 +114,3 @@ if __name__ == "__main__":
             existance_check_call(d,files,args)
             print 'The subdirectory is: {}'.format(d)
             print 'The files in subdirectory are: {}'.format(d)
-
