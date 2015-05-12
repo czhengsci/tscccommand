@@ -18,7 +18,7 @@ import fnmatch
 from monty.tempfile import ScratchDir
 
 
-SCRATCH_ROOT = "/oasis/tscc/scratch/"
+SCRATCH_ROOT = "/oasis/tscc/scratch/chz022/"
 CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
 
@@ -69,9 +69,9 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime, InputFile)
     OutputFile = InputFile[0].rsplit('.',1)[0] + '.out'
 
 
-    with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
-        scratch = temp_dir
-
+    # with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
+    #     scratch = temp_dir
+    scratch = pjoin(SCRATCH_ROOT,InputFile)
 
 
     p = {
@@ -85,7 +85,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime, InputFile)
         "verbosity": verbosity,
         "nnodes":numnodes,
         "ibswitch":ibswitch,
-        "Input_File":inputfilename[0],
+        "Input_File":InputFile,
         "Output_File":OutputFile
     }
 
