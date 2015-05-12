@@ -63,10 +63,10 @@ tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
 
     inputfilename = filter(lambda x: 'pw.in' in x, InputFile)
-    # name = name if name else "job"
-    name = inputfilename.split('.')[0]
+    name = name if name else "job"
+    # name = inputfilename[0].split('.')[0]
     dirname = os.path.abspath(d)
-    OutputFile = inputfilename.rsplit('.',1)[0] + '.out'
+    OutputFile = inputfilename[0].rsplit('.',1)[0] + '.out'
 
 
     with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
@@ -85,7 +85,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime,InputFile):
         "verbosity": verbosity,
         "nnodes":numnodes,
         "ibswitch":ibswitch,
-        "Input_File":inputfilename,
+        "Input_File":inputfilename[0],
         "Output_File":OutputFile
     }
 
