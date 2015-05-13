@@ -26,7 +26,7 @@ def folder_move(dict,dest):
 #Two arguments could be specified to set moving option different condition
 def existance_check_call(directory,files,args):
 
-    if '.pw.in' in files:
+    if 'CONTCAR.relax2.gz' in files:
         print 'CONTCAR.relax2.gz exist in subdir: ' + directory
         if args.store == 'Yes':
             folder_move(directory,args.storedirectory)
