@@ -45,8 +45,7 @@ cd $SCRATCH
 mpirun -machinefile $PBS_NODEFILE -np 16 /home/chz022/repos/Quantum_Espresso/espresso-4.1.2/bin/pw.x -inp {Input_File} > {Output_File}
 
 #This moves the completed calculation back to the working directory and cleanup.
-rm -rf tmp/
-mv * $CURR_DIR
+mv *out *.pw.in $CURR_DIR
 """
 
 walltime_settings={
@@ -67,7 +66,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime, InputFile)
     name = name if name else "job"
     # name = InputFile[0].split('.')[0]
     dirname = os.path.abspath(d)
-    OutputFile = InputFile.rstrip('pw.in') + 'out'
+    OutputFile = InputFile.rstrip('pw.in') + '.out'
 
 
     # with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
