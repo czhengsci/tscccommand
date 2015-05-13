@@ -45,7 +45,7 @@ cd $SCRATCH
 mpirun -machinefile $PBS_NODEFILE -np 16 /home/chz022/repos/Quantum_Espresso/espresso-4.1.2/bin/pw.x -inp {Input_File} > {Output_File}
 
 #This moves the completed calculation back to the working directory and cleanup.
-rm tmp
+rm -rf tmp/
 mv * $CURR_DIR
 """
 
