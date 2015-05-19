@@ -42,7 +42,7 @@ mkdir $SCRATCH
 cp * $SCRATCH
 cd $SCRATCH
 
-mpirun -machinefile $PBS_NODEFILE -np 16 /home/chz022/repos/Quantum_Espresso/espresso-4.1.2/bin/pw.x -inp {Input_File} > {Output_File}
+mpirun -machinefile $PBS_NODEFILE -np 16 /home/chz022/repos/Quantum_Espresso/espresso-5.1.2/bin/pw.x -inp {Input_File} > {Output_File}
 
 #This moves the completed calculation back to the working directory and cleanup.
 
