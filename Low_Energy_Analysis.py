@@ -90,6 +90,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
     threshold=float(threshold)
 
     for e in entries:
+
         if not detailed:
             delta_vol = "{:.2f}".format(e.data["delta_volume"] * 100)
         else:
@@ -100,13 +101,21 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
         entry_path = e.data['filename'].rsplit('/',1)[0]
 
-        entry_data= [rootdir,e.data["filename"].replace("./", ""),
-                         re.sub("\s+", "", e.composition.formula),
-                         "{:.5f}".format(e.energy),
-                         "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
-                         "{:.5f}".format(e.energy_per_atom),
-                         delta_vol,e.parameters['run_type'],
-                         e.data['NUPDOWN']]
+        if args.nupdown:
+            entry_data= [rootdir,e.data["filename"].replace("./", ""),
+                             re.sub("\s+", "", e.composition.formula),
+                             "{:.5f}".format(e.energy),
+                             "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
+                             "{:.5f}".format(e.energy_per_atom),
+                             delta_vol,e.parameters['run_type'],
+                             e.data['NUPDOWN']]
+        else:
+            entry_data= [rootdir,e.data["filename"].replace("./", ""),
+                             re.sub("\s+", "", e.composition.formula),
+                             "{:.5f}".format(e.energy),
+                             "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
+                             "{:.5f}".format(e.energy_per_atom),
+                             delta_vol,e.parameters['run_type']]
 
         if args.ion_list:
             if args.ion_list[0] == "All":
@@ -310,8 +319,12 @@ def group_directories(root_dir, group_depth):
 
 def output_CSV(data_entry,args):
 
-    fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
-                  "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN']
+    if args.nupdown:
+        fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
+                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN']
+    else:
+        fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
+                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type']
 
     if args.ion_list:
         fieldnames.extend(mag_list_process('mag_list',args.ion_list))
@@ -398,6 +411,11 @@ def main():
     parser_vasp.add_argument("-avl", "--averlist", dest="ion_avg_list", type=str, nargs='*',
                              help="Return average magmons value of ions. ION LIST can be a range "
                              "(e.g., 1-2, 3-4) or the string 'All' for all ions.")
+
+    parser_vasp.add_argument("-nu", "--nupdown", dest="nupdown",
+                             action="store_true",
+                             help="set and determine whether fetch NUPDOWN value, no pass if NUPDOWN not setting"
+                             )
 
 
     parser_vasp.set_defaults(func=file_process)
