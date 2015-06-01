@@ -35,6 +35,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
     ion_list = 'Novalue'
     ave_key_list = 'Novalue'
+    threscount = 0
 
     """
     Doc string.
@@ -131,8 +132,10 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
             ave_mag_data, ave_key_list = get_ave_magnetization(entry_path,args.ion_avg_list)
             entry_data.extend(ave_mag_data)
 
-        if threshold != 0 and float(entry_data[4])<threshold:
+        if threshold != 0:
             all_data.append(entry_data)
+            if float(entry_data[4])<threshold:
+                threscount +=1
 
         elif threshold == 0:
             all_data.append(entry_data)
@@ -158,6 +161,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
         print 'Energy above hull is: \n'
         print map(lambda x: x.encode('ascii'), energy_diff)
 
+    logging.info('In group: {}, number of entries fall in threshold is {}'.format(rootdir,threscount))
     all_data.append([])
 
     return all_data
