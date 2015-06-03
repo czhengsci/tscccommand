@@ -78,7 +78,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
     # logging.debug('First Energy entry is {}'.format(entries[0]))
 
-    base_energy = entries[0].energy
+    # base_energy = entries[0].energy
 
 
 
@@ -303,7 +303,7 @@ def parse_vasp(groupdireclist, args):
 
 def group_directories(root_dir, group_depth):
 
-    rootpath = root_dir[0].rstrip('/')
+    rootpath = root_dir[0]
     pathdepth = glob.glob(rootpath+'/*'*int(group_depth))
     dirlistdepth = filter(lambda f: os.path.isdir(f),pathdepth)
 
