@@ -78,7 +78,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
     # logging.debug('First Energy entry is {}'.format(entries[0]))
 
-    # base_energy = entries[0].energy
+    base_energy = entries[0].energy
 
 
 
