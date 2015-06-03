@@ -80,9 +80,6 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
     base_energy = entries[0].energy
 
-    logging.debug('Lowest energy entry data content is:{}'.format(entries[0].data))
-    logging.debug("Lowest energy entry's energy is: {}".format(entries[0].energy))
-
 
 
     all_data = []
@@ -142,7 +139,6 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
         energy_diff.append("{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)))
 
-    logging.debug('group data is: {}'.format(all_data))
 
     # if len(all_data) > 0:
     #     headers = ("Directory", "Formula", "Energy", "Energy Diff (meV)/F.U.","E/Atom", "% vol chg")
@@ -208,7 +204,6 @@ def mag_list_process(option,list_to_process):
             processed_list.append(ele)
 
 
-    logging.debug('The processed and return list is: {}'.format(processed_list))
     return processed_list
 
 
@@ -228,11 +223,9 @@ def get_ave_magnetization(entry_path, ave_list):
             ave_list_dic[key] = value
             row_stat[key] = []
             keylist.append(key)
-            logging.debug('Key value is {}'.format(key))
     else:
         keylist.append('Average All')
         row_stat['Average All']=[]
-        logging.debug('Key value is {}'.format(keylist))
 
 
 
