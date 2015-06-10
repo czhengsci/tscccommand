@@ -142,7 +142,7 @@ def main():
                                 nargs="?",default='1',help='Command to setup number of nodes.')
 
     parser_resub.add_argument("-ib", "--ibswitch", dest="ibswitch", type=str,
-                                choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2'],
+                                choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2','sandy'],
                                 nargs="?", default="ib",
                                 help="Command to setup ibswitch. Defaults to 'ib'")
 
