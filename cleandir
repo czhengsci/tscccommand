@@ -1,0 +1,5 @@
+#!/bin/bash
+
+find . -name CHGCAR* -user $USER -exec rm '{}' \;
+find . -name CHG* -user $USER -exec rm '{}' \;
+
