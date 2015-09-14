@@ -25,13 +25,17 @@ from pymatgen.apps.borg.hive import SimpleVaspToComputedEntryDrone, \
 from pymatgen.apps.borg.queen import BorgQueen
 from pymatgen.io.vaspio import Outcar, Vasprun, Chgcar
 import numpy as np
+from blackcomb.chute.Ordering_Site_Analysis import Species_XYZ_Coordnation as SXYZ
+from pymatgen.io.vaspio.vasp_input import Incar, Potcar, Poscar
+from blackcomb.chute.Ordering_Site_Analysis import Na1_Na2_Alkali_Site_Analysis as Na12
+from blackcomb.chute.Ordering_Site_Analysis import check_existence as check_ex
 
 
 SAVE_FILE = "vasp_data.gz"
 
 
 def get_energies(rootdir, reanalyze, verbose, detailed,
-                 sort, formulaunit, debug, hull, threshold, args):
+                 sort, formulaunit, debug, hull, threshold, args, templatestructure):
 
     ion_list = 'Novalue'
     ave_key_list = 'Novalue'
@@ -54,9 +58,13 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
                                          data=["filename",
                                                "initial_structure"])
 
+
+
     ncpus = multiprocessing.cpu_count()
     logging.info("Detected {} cpus".format(ncpus))
     queen = BorgQueen(drone, number_of_drones=ncpus)
+
+
     if os.path.exists(SAVE_FILE) and not reanalyze:
         msg = "Using previously assimilated data from {}.".format(SAVE_FILE) \
             + " Use -f to force re-analysis."
@@ -79,13 +87,28 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
     # logging.debug('First Energy entry is {}'.format(entries[0]))
 
     base_energy = entries[0].energy
+    logging.debug('Type of entries is: {}'.format(type(entries)))
+    logging.debug('First Element of Entries is:{}'.format(entries[0]))
+
+    # logging.debug('First Energy entry structure is {}'.format(entries[0].structure))
+
+    xy_direction = int(args.XYdirection)
+    tolerance = float(args.tolerance)
 
 
+    if args.template:
+
+        logging.debug('Temp Structure site info is: {}'.format(Na12(['Co','Mn'],['Na'],templatestructure,templatestructure,XY_Direction=xy_direction,tol=tolerance)))
+        template_site_info = Na12(['Co','Mn'],['Na'],templatestructure,templatestructure,XY_Direction=xy_direction,tol=tolerance)
 
     all_data = []
     energy_diff = []
 
     threshold=float(threshold)
+
+    Structure_info_dict = {}
+    check_ion_seq = [args.dupion]
+
 
     for e in entries:
 
@@ -99,6 +122,10 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
         entry_path = e.data['filename'].rsplit('/',1)[0]
 
+        entry_site_info = Na12(['Co','Mn'],['Na'],e.structure,e.structure,XY_Direction=xy_direction,tol=tolerance)
+
+        logging.debug('Total Na site: {}'.format(entry_site_info['Total_Na_Site']))
+
         if args.nupdown:
             entry_data= [rootdir,e.data["filename"].replace("./", ""),
                              re.sub("\s+", "", e.composition.formula),
@@ -106,7 +133,7 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
                              "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
                              "{:.5f}".format(e.energy_per_atom),
                              delta_vol,e.parameters['run_type'],
-                             e.data['NUPDOWN']]
+                             e.data['NUPDOWN'],e.data['ISMEAR']]
         else:
             entry_data= [rootdir,e.data["filename"].replace("./", ""),
                              re.sub("\s+", "", e.composition.formula),
@@ -114,6 +141,25 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
                              "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
                              "{:.5f}".format(e.energy_per_atom),
                              delta_vol,e.parameters['run_type']]
+
+
+        if args.structure:
+            entry_data.extend([entry_site_info['Total_Na_Site'],entry_site_info['Na2_Site'],entry_site_info['Na1_Mn_Site'],
+            entry_site_info['Na1_Co_Site'],entry_site_info['Na1_Mn_Co_Site']])
+
+        if args.template:
+            entry_data.extend([template_site_info['Total_Na_Site'],template_site_info['Na2_Site'],template_site_info['Na1_Mn_Site'],
+            template_site_info['Na1_Co_Site'],template_site_info['Na1_Mn_Co_Site']])
+
+
+        # sitelist = ['Existed','Duplicate_Entry']
+        if args.duplicate:
+            # filename.rsplit('/',2)[-2]
+
+            Duplicate, Duplicat_Entry, Structure_info_dict = check_ex(check_ion_seq,Structure_info_dict,
+                                                                      e,args.tolerance)
+            entry_data.extend([Duplicate,Duplicat_Entry])
+
 
         if args.ion_list:
             if args.ion_list[0] == "All":
@@ -290,12 +336,23 @@ def parse_vasp(groupdireclist, args):
 
     default_energies = not (args.get_energies or args.ion_list or args.ion_avg_list)
 
+    templatestructure = []
+
+    if args.template:
+        for (parent, subdirs, files) in os.walk(args.strtemp[0]):
+            if 'POSCAR' in files:
+                filepath = glob.glob(os.path.join(parent,"POSCAR"))
+                poscarfile = Poscar.from_file(filepath[0])
+                templatestructure = poscarfile.structure
+
+
 
     if args.get_energies or default_energies:
         for d in groupdireclist:
             groupdata= get_energies(d, args.reanalyze, args.verbose,
-                         args.detailed, args.sort[0],args.formulaunit,args.debug,args.hull,args.threshold, args)
+                         args.detailed, args.sort[0],args.formulaunit,args.debug,args.hull,args.threshold, args, templatestructure)
             data_to_csv.extend(groupdata)
+
 
 
     output_CSV(data_to_csv,args)
@@ -318,10 +375,24 @@ def output_CSV(data_entry,args):
 
     if args.nupdown:
         fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
-                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN']
+                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN','ISMEAR']
     else:
         fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
                       "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type']
+
+
+    if args.structure:
+        sitelist = ['Total Na Site','Na2_Site','Na1_Mn_Site','Na1_Co_Site','Na1_Mn_Co_Site']
+        fieldnames.extend(sitelist)
+
+    if args.template:
+        tempsitelist = ['Temp_Total Na Site','Temp_Na2_Site','Temp_Na1_Mn_Site',
+                        'Temp_Na1_Co_Site','Temp_Na1_Mn_Co_Site']
+        fieldnames.extend(tempsitelist)
+
+    if args.duplicate:
+        sitelist = ['Existed','Duplicate_Entry']
+        fieldnames.extend(sitelist)
 
     if args.ion_list:
         fieldnames.extend(mag_list_process('mag_list',args.ion_list))
@@ -366,15 +437,23 @@ def main():
     parser_vasp.add_argument("directories", metavar="dir", default=".",
                              type=str, nargs="*",
                              help="directory to process (default to .)")
+
+
     parser_vasp.add_argument("-dep",  "--depth", dest='depth', default="1",
                              type=str, nargs="?",
                              help="Depth level of children directory that will be group together")
 
     parser_vasp.add_argument("-db", "--debug", dest="debug", action="store_true",
                              help="Debug mode, provides information used for debug")
+
+    parser_vasp.add_argument("-dup", "--duplicate", dest="duplicate", action="store_true",
+                             help="Check duplication mode, see if the structure already exist")
+
+    parser_vasp.add_argument("-dupion", "--duplicateion", dest="dupion", type=str, nargs="?",
+                             help="Ion to check position duplication, sofar only use single element")
+
     parser_vasp.add_argument("-thr", "--threshold", dest="threshold", type=str, nargs="?", default='0',
                              help="The threshold of energy difference failed to distinguish with DFT accuracy")
-
 
     parser_vasp.add_argument("-e", "--energies", dest="get_energies",
                              action="store_true", help="Print energies")
@@ -383,12 +462,14 @@ def main():
     parser_vasp.add_argument("-m", "--mag", dest="ion_list", type=str, nargs=1,
                              help="Print magmoms. ION LIST can be a range "
                              "(e.g., 1-2) or the string 'All' for all ions.")
+
     parser_vasp.add_argument("-f", "--force", dest="reanalyze",
                              action="store_true",
                              help="Force reanalysis. Typically, vasp_analyzer"
                              " will just reuse a vasp_analyzer_data.gz if "
                              "present. This forces the analyzer to reanalyze "
                              "the data.")
+
     parser_vasp.add_argument("-v", "--verbose", dest="verbose",
                              action="store_true",
                              help="verbose mode. Provides detailed output on "
@@ -397,6 +478,12 @@ def main():
                              action="store_true",
                              help="Detailed mode. Parses vasprun.xml instead "
                              "of separate vasp input. Slower.")
+
+    parser_vasp.add_argument("-str", "--structure", dest="structure",
+                             action="store_true",
+                             help="Structure mode, analysis Na site infomation of  "
+                             "vasp run")
+
     parser_vasp.add_argument("-s", "--sort", dest="sort", type=str, nargs=1,
                              default=["energy_per_atom"],
                              help="Sort criteria. Defaults to energy / atom.")
@@ -413,6 +500,26 @@ def main():
                              action="store_true",
                              help="set and determine whether fetch NUPDOWN value, no pass if NUPDOWN not setting"
                              )
+
+    parser_vasp.add_argument("-temp", "--template", dest="template",
+                             action="store_true",
+                             help="Structure template passed in mode, analysis the  "
+                             "template passed in")
+
+    parser_vasp.add_argument("-strtemp", default=".",dest='strtemp',
+                             type=str, nargs="*",
+                             help="directory to load template structure for further analysis")
+
+    parser_vasp.add_argument("-XY", "--XYdirection", dest="XYdirection", type=str, nargs="?", default='0',
+                             help="The XY-direction parameter used in structure analysis, "
+                                  "When C vector up, is default value 0, when B vector up, use value 1")
+
+    parser_vasp.add_argument("-tol", "--tolerance", dest="tolerance", type=str, nargs="?", default='1e-4',
+                             help="The tolerance value used in structure comparison function")
+
+
+
+
 
 
     parser_vasp.set_defaults(func=file_process)

@@ -53,7 +53,7 @@ walltime_settings={
 pjoin = os.path.join
 
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
+def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, nproc):
     name = name if name else "job"
     dirname = os.path.abspath(d)
 
@@ -63,7 +63,7 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
         "command": command,
         "name": name,
         "user": os.environ["USER"],
-        "nproc": 16,
+        "nproc": nproc,
         "dir": dirname,
         "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"]),
         "verbosity": verbosity,
@@ -85,7 +85,7 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime):
         # p["walltime"] = "24:00:00"
 
 
-    p['multinproc'] = 16*numnodes
+    p['multinproc'] = nproc*numnodes
 
     p['walltime']= '%d:00:00'% walltime
 
@@ -148,6 +148,9 @@ if __name__ == "__main__":
                         help="Provide a walltime for the job in hours. "
                              "Defaults are specified for each queue. But for "
                              "the hotel queue, you must specify a walltime.")
+    parser.add_argument("-nproc", "--numberproc", dest="nproc", type=int,
+                        nargs="?", default=16,
+                        help="Provide number of number of processor each node have")
 
 
     args = parser.parse_args()
@@ -177,4 +180,4 @@ if __name__ == "__main__":
             if set(files).issuperset(VASP_INPUT):
                 proc_dir(parent, queue=args.queue, command=args.command,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime)
+                         ibswitch=args.ibswitch,walltime=walltime,nproc = args.nproc)
