@@ -126,6 +126,13 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
         logging.debug('Total Na site: {}'.format(entry_site_info['Total_Na_Site']))
 
+        #Coordination extraction part
+        # na_layer_site_fcoords = [site._fcoords for site in s if site.specie.symbol == "Na"]
+        na_sites_fcoords = [site._fcoords for site in e.data['Cif_Structure'] if site.specie.symbol == 'Na']
+        na_sites_fcoords_list_tuple = [tuple(coord) for coord in na_sites_fcoords]
+
+
+
         if args.nupdown:
             entry_data= [rootdir,e.data["filename"].replace("./", ""),
                              re.sub("\s+", "", e.composition.formula),
@@ -133,14 +140,14 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
                              "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
                              "{:.5f}".format(e.energy_per_atom),
                              delta_vol,e.parameters['run_type'],
-                             e.data['NUPDOWN'],e.data['ISMEAR']]
+                             e.data['NUPDOWN'],e.data['ISMEAR'],na_sites_fcoords_list_tuple]
         else:
             entry_data= [rootdir,e.data["filename"].replace("./", ""),
                              re.sub("\s+", "", e.composition.formula),
                              "{:.5f}".format(e.energy),
                              "{:.5f}".format(1000*(e.energy-base_energy)/int(formulaunit)),
                              "{:.5f}".format(e.energy_per_atom),
-                             delta_vol,e.parameters['run_type']]
+                             delta_vol,e.parameters['run_type'],na_sites_fcoords_list_tuple]
 
 
         if args.structure:
@@ -152,7 +159,12 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
             template_site_info['Na1_Co_Site'],template_site_info['Na1_Mn_Co_Site']])
 
 
+
+
+
+
         # sitelist = ['Existed','Duplicate_Entry']
+        logging.debug(e.data)
         if args.duplicate:
             # filename.rsplit('/',2)[-2]
 
@@ -375,10 +387,10 @@ def output_CSV(data_entry,args):
 
     if args.nupdown:
         fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
-                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN','ISMEAR']
+                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','NUPDOWN','ISMEAR','Na_Site_Coords']
     else:
         fieldnames = ["Directory Group", "Directory", "Formula", "Energy",
-                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type']
+                      "Energy Diff (meV)/F.U.","E/Atom", "% vol chg", 'Run_Type','Na_Site_Coords']
 
 
     if args.structure:
