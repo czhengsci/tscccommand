@@ -69,7 +69,7 @@ pjoin = os.path.join
 tempscratch = pjoin(SCRATCH_ROOT, os.environ["USER"])
 
 
-def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
+def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime, nproc):
     name = name if name else "job"
     dirname = os.path.abspath(d)
     with ScratchDir(tempscratch, create_symbolic_link=True, copy_to_current_on_exit=True, copy_from_current_on_enter=True) as temp_dir:
@@ -82,7 +82,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
         "account_name": "ong-group",
         "name": name,
         "user": os.environ["USER"],
-        "nproc": 16,
+        "nproc": nproc,
         "dir": dirname,
         "scratch": scratch,
         "verbosity": verbosity,
@@ -104,7 +104,7 @@ def proc_dir(d, queue, name, verbosity, numnodes, ibswitch, walltime):
         # p["walltime"] = "24:00:00"
 
 
-    p['multinproc'] = 16*numnodes
+    p['multinproc'] = nproc*numnodes
 
     p['walltime']= '%d:00:00'% walltime
 
@@ -160,6 +160,10 @@ if __name__ == "__main__":
                              "Defaults are specified for each queue. But for "
                              "the hotel queue, you must specify a walltime.")
 
+    parser.add_argument("-nproc", "--numberproc", dest="nproc", type=int,
+                        nargs="?", default=16,
+                        help="Provide number of number of processor each node have")
+
 
     args = parser.parse_args()
 
@@ -187,4 +191,4 @@ if __name__ == "__main__":
             if set(files).issuperset(VASP_INPUT):
                 proc_dir(parent, queue=args.queue,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime)
+                         ibswitch=args.ibswitch,walltime=walltime,nproc = args.nproc)

@@ -128,8 +128,14 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
 
         #Coordination extraction part
         # na_layer_site_fcoords = [site._fcoords for site in s if site.specie.symbol == "Na"]
-        na_sites_fcoords = [site._fcoords for site in e.data['Cif_Structure'] if site.specie.symbol == 'Na']
+        # if 'Cif_Structure' in e.data.keys():
+        #     na_sites_fcoords = [site._fcoords for site in e.data['Cif_Structure'] if site.specie.symbol == 'Na']
+        #     na_sites_fcoords_list_tuple = [tuple(coord) for coord in na_sites_fcoords]
+
+        na_sites_fcoords = [site._fcoords for site in e.data['CONTCAR_Structure'] if site.specie.symbol == 'Na']
         na_sites_fcoords_list_tuple = [tuple(coord) for coord in na_sites_fcoords]
+
+
 
 
 
@@ -157,6 +163,8 @@ def get_energies(rootdir, reanalyze, verbose, detailed,
         if args.template:
             entry_data.extend([template_site_info['Total_Na_Site'],template_site_info['Na2_Site'],template_site_info['Na1_Mn_Site'],
             template_site_info['Na1_Co_Site'],template_site_info['Na1_Mn_Co_Site']])
+
+
 
 
 
