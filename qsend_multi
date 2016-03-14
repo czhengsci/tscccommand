@@ -40,6 +40,8 @@ commands = {
     "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch} relax relax',
     "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch}',
     "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch} relax',
+    "run_vasp_gpu": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /home/z9wang/bin/install-vasp/5.4.1-gpu/bin/vasp_gpu" -z -s {scratch} relax relax'
+
 }
 
 walltime_settings={
@@ -83,6 +85,11 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, np
     else: #glean queue
         p["group_list"] = "ong-group"
         # p["walltime"] = "24:00:00"
+
+    if p['ibswitch']=='gpu':
+        p['nproc']= 12
+        nproc= 12
+
 
 
     p['multinproc'] = nproc*numnodes
@@ -139,7 +146,7 @@ if __name__ == "__main__":
                         nargs="?",default='1',help='Command to setup number of nodes.')
 
     parser.add_argument("-ib", "--ibswitch", dest="ibswitch", type=str,
-                        choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2','sandy'],
+                        choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2','sandy','gpu'],
                         nargs="?", default="ib",
                         help="Command to setup ibswitch. Defaults to 'ib'")
 
