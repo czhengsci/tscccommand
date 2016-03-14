@@ -14,7 +14,6 @@ import os
 import subprocess
 import argparse
 
-
 SCRATCH_ROOT = "/oasis/tscc/scratch/"
 CWD = os.getcwd()
 SUBMIT_FNAME = "submit_script"
@@ -40,22 +39,21 @@ commands = {
     "run_vasp_glean": 'run_vasp_glean -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch} relax relax',
     "run_vasp_md": 'run_vasp_md -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch}',
     "run_vasp_single": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /opt/vasp/5.4.1/bin/vasp" -z -s {scratch} relax',
-    "run_vasp_gpu": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /home/z9wang/bin/install-vasp/5.4.1-gpu/bin/vasp_gpu" -z -s {scratch} relax relax'
+    "run_vasp_gpu": 'run_vasp -c "mpirun -machinefile $PBS_NODEFILE -np {multinproc} /home/z9wang/bin/install-vasp/5.4.1-gpu/bin/vasp_gpu" -z -s {scratch} -npar relax relax'
 
 }
 
-walltime_settings={
-    'home':(24,240),
-    'hotel':(24,168),
-    'condo':(8,8),
-    'glean':(24,240)
+walltime_settings = {
+    'home': (24, 240),
+    'hotel': (24, 168),
+    'condo': (8, 8),
+    'glean': (24, 240)
 }
-
 
 pjoin = os.path.join
 
 
-def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, nproc):
+def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch, walltime, nproc):
     name = name if name else "job"
     dirname = os.path.abspath(d)
 
@@ -69,8 +67,8 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, np
         "dir": dirname,
         "scratch": pjoin(SCRATCH_ROOT, os.environ["USER"]),
         "verbosity": verbosity,
-        "nnodes":numnodes,
-        "ibswitch":ibswitch
+        "nnodes": numnodes,
+        "ibswitch": ibswitch
     }
 
     if queue == "home":
@@ -82,19 +80,17 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, np
     elif queue == 'hotel':
         p["group_list"] = "ong-group"
         # p["walltime"] = "168:00:00"
-    else: #glean queue
+    else:  # glean queue
         p["group_list"] = "ong-group"
         # p["walltime"] = "24:00:00"
 
-    if p['ibswitch']=='gpu':
-        p['nproc']= 12
-        nproc= 12
+    if p['ibswitch'] == 'gpu':
+        p['nproc'] = 12
+        nproc = 12
 
+    p['multinproc'] = nproc * numnodes
 
-
-    p['multinproc'] = nproc*numnodes
-
-    p['walltime']= '%d:00:00'% walltime
+    p['walltime'] = '%d:00:00' % walltime
 
     # p["master_command"] = commands[command].format(**p) if queue != 'glean'\
     #     else commands['run_vasp_glean']
@@ -110,10 +106,10 @@ def proc_dir(d, queue, command, name, verbosity, numnodes, ibswitch,walltime, np
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""
+            description="""
         qsend is a convenient script for submitting jobs using templates on
         TSCC. Currently mainly for VASP jobs.""",
-        epilog="""
+            epilog="""
     Author: Shyue Ping Ong
     Version: {}
     Last updated: {}""".format(__version__, __date__))
@@ -123,7 +119,7 @@ if __name__ == "__main__":
                         help="directories to process")
     parser.add_argument("-q", "--queue", dest="queue", type=str,
                         nargs="?", default="glean",
-                        choices=["home", "condo", "glean",'hotel'],
+                        choices=["home", "condo", "glean", 'hotel'],
                         help="Queue to send jobs to. Defaults to 'glean'. "
                              "Other option is 'condo' or 'home' or 'hotel'.")
     parser.add_argument("-v", "--verbosity", dest="verbosity", type=str,
@@ -134,7 +130,7 @@ if __name__ == "__main__":
                              "begin, abort and end).")
     parser.add_argument("-c", "--command", dest="command", type=str,
                         nargs="?", default="run_vasp",
-                        choices=["run_vasp", "run_vasp_md","run_vasp_glean",'run_vasp_single', 'run_vasp_gpu'],
+                        choices=["run_vasp", "run_vasp_md", "run_vasp_glean", 'run_vasp_single', 'run_vasp_gpu'],
                         help="Command to run. Defaults to 'vasp'.")
 
     parser.add_argument("-n", "--name", dest="name", type=str,
@@ -142,11 +138,11 @@ if __name__ == "__main__":
                         help="Name for your jobs. Makes it easier to "
                              "identify which series of jobs they "
                              "belong to. Keep it short and crytic.")
-    parser.add_argument('-nod','--numnodes',dest='nnodes',type=int,
-                        nargs="?",default='1',help='Command to setup number of nodes.')
+    parser.add_argument('-nod', '--numnodes', dest='nnodes', type=int,
+                        nargs="?", default='1', help='Command to setup number of nodes.')
 
     parser.add_argument("-ib", "--ibswitch", dest="ibswitch", type=str,
-                        choices=['ib','ib:ibswitch3','ib:ibswitch4','ib:rack1','ib:rack2','sandy','gpu'],
+                        choices=['ib', 'ib:ibswitch3', 'ib:ibswitch4', 'ib:rack1', 'ib:rack2', 'sandy', 'gpu'],
                         nargs="?", default="ib",
                         help="Command to setup ibswitch. Defaults to 'ib'")
 
@@ -159,14 +155,13 @@ if __name__ == "__main__":
                         nargs="?", default=16,
                         help="Provide number of number of processor each node have")
 
-
     args = parser.parse_args()
 
     VASP_INPUT = set(["INCAR", "POSCAR", "POTCAR", "POSCAR"])
 
     queue = args.queue
 
-    print('%s queue selected.'% queue)
+    print('%s queue selected.' % queue)
 
     walltime = args.walltime
 
@@ -176,7 +171,7 @@ if __name__ == "__main__":
               "use the -w option to specify any other number "
               "explicitly. The %s queue has a limit of %d hours. But be "
               "careful about running very long jobs." % (
-            queue, walltime[1]))
+                  queue, walltime[1]))
         walltime = walltime[0]
     print("Walltime is set at %d hours." % walltime)
     print("Selected command is " + commands[args.command])
@@ -187,4 +182,4 @@ if __name__ == "__main__":
             if set(files).issuperset(VASP_INPUT):
                 proc_dir(parent, queue=args.queue, command=args.command,
                          name=args.name, verbosity=args.verbosity, numnodes=args.nnodes,
-                         ibswitch=args.ibswitch,walltime=walltime,nproc = args.nproc)
+                         ibswitch=args.ibswitch, walltime=walltime, nproc=args.nproc)
