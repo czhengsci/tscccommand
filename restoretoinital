@@ -28,7 +28,7 @@ def proc_dir(d):
     subprocess.call('mv * restore/',shell=True)
 
     os.chdir(restorepath)
-    subprocess.call('mv KPOINTS INCAR POSCAR POTCAR *.cif ../',shell=True)
+    subprocess.call('mv KPOINTS INCAR POSCAR POTCAR *.cif transformations.json ../',shell=True)
 
     os.chdir(dirname)
     subprocess.call('rm -r restore',shell=True)
